@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 Hyperparameters
 '''
 BATCH_SIZE = 2
-EPOCHS = 30
+EPOCHS = 5
 LR = 1e-4
 
 
@@ -126,5 +126,8 @@ model.compile(optimizer=opt,loss=loss)
 Train our model
 '''
 model.summary()
+
+train_imgs = np.squeeze(train_imgs,axis=2)
+print(train_imgs.shape)
 history = model.fit(x=train_imgs,y=train_masks,batch_size=BATCH_SIZE,epochs=EPOCHS,verbose=1)
 
