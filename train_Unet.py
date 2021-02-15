@@ -107,10 +107,24 @@ def unet(input_size = INPUT_SHAPE,batch_size=BATCH_SIZE):
     conv9 = tf.keras.layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
     conv10 = tf.keras.layers.Conv2D(1, 1, activation = 'sigmoid')(conv9)
 
-    return conv10
+    model= tf.keras.Model(inputs,conv10)
+
+    return model
 
 model = unet()
 
-# model.compile(optimizer=tf.keras.optimizers.Adam(LR),loss=)
+###################################
+'''
+Genrate optimizer and loss function and apply them to our unet model
+'''
+opt =tf.keras.optimizers.Adam(LR)
+loss =tf.keras.losses.CategoricalCrossentropy()
+model.compile(optimizer=opt,loss=loss)
 
+###################################
+'''
+Train our model
+'''
+model.summary()
+history = model.fit(x=train_imgs,y=train_masks,batch_size=BATCH_SIZE,epochs=EPOCHS,verbose=1)
 
