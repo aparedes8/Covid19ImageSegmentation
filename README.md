@@ -1,7 +1,8 @@
 # Covid19 Image Segmentation Project
 
-In order to run this project you must have Tensorflow2, Matplotlib,Numpy, and Nibabel.
-We also assume the use fo a linux system.
+In order to run this project you must have Tensorflow2, Matplotlib, Numpy, and Nibabel.
+
+We also assume the use of a linux system.
 
 To begin run the following to download the CT images dataset:
 
