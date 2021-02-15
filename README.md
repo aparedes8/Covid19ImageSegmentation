@@ -1,1 +1,1 @@
-# Covid19ImageSegmentation
+# Covid19 Image Segmentation Project
