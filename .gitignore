@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+data/test/val_im.nii
+data/train/tr_im.nii
+data/train/tr_mask.nii
