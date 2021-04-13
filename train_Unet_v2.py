@@ -11,8 +11,8 @@ from unet import Unet
 '''
 Hyperparameters
 '''
-BATCH_SIZE = 2
-EPOCHS = 30
+BATCH_SIZE = 4
+EPOCHS = 2
 LR = 1e-7
 
 ###################################
@@ -144,6 +144,8 @@ def unet(input_size = (512,512,1)):
     return model
 
 model = unet()
+model.build(input_shape=(512,512,1))
+model.summary()
 
 
 ###################################
@@ -182,7 +184,6 @@ test_acc_list = []
 test_loss_list = []
 
 
-# model.summary()
 train_len = len(list(train_ds))
 # test_len = len(list(test_ds))
 for epoch in range(EPOCHS):
@@ -219,6 +220,7 @@ for epoch in range(EPOCHS):
 epoch_list = np.arange(1,EPOCHS+1,1)
 print(len(epoch_list))
 print(len(train_acc_list))
+print(train_acc_list)
 
 plt.title("Accuracy vs Epoch Plot")
 plt.plot(epoch_list,train_acc_list,label='Train Accuracy',color='r')
@@ -231,9 +233,14 @@ plt.savefig("./results/Accuracy_plot.png")
 
 plt.figure()
 plt.title("Loss vs Epoch Plot")
-# plt.plot(epoch_list,test_loss_list,label='Test loss',color='r')
-plt.plot(epoch_list,train_loss_list,label='Train loss',color='g')
+plt.plot(epoch_list,train_loss_list,label='Train loss',color='r')
+# plt.plot(epoch_list,test_loss_list,label='Test loss',color='g')
 plt.xlabel("EPOCHS")
 plt.ylabel("Loss")
 plt.legend()
 plt.savefig("./results/loss_plot.png")
+
+
+
+pred = model(train_imgs[0,...])
+print(np.unique(pred))
