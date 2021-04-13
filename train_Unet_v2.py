@@ -84,6 +84,12 @@ train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy
 test_loss = tf.keras.metrics.Mean(name='test_loss')
 test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='test_accuracy')
 ###################################
+#load model 
+
+model = Unet()
+
+
+###################################
 '''
 Generate gradient caclulations and weight update steps from trian and test
 '''
@@ -109,10 +115,8 @@ def test_step(images, labels):
 
   test_loss(t_loss)
   test_accuracy(labels, predictions)
-
-
-
 ###################################
+'''
 '''
 Train and test our model
 '''
