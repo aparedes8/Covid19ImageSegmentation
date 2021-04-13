@@ -143,7 +143,7 @@ def unet(input_size = (512,512,1)):
 
     return model
 
-model = unet()
+model = Unet()
 model.build(input_shape=(512,512,1))
 model.summary()
 
