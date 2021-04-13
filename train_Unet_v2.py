@@ -117,7 +117,6 @@ def test_step(images, labels):
   test_accuracy(labels, predictions)
 ###################################
 '''
-'''
 Train and test our model
 '''
 train_acc_list = []
