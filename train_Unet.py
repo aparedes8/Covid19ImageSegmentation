@@ -5,14 +5,15 @@ import numpy as np
 import os
 import nibabel as nib #Used to open nifTi or .nii files 
 import matplotlib.pyplot as plt 
+import cv2
 
 ###################################
 '''
 Hyperparameters
 '''
-BATCH_SIZE = 2
-EPOCHS = 30
-LR = 1e-4
+BATCH_SIZE = 4
+EPOCHS = 3
+LR = 1e-7
 
 
 ###################################
@@ -31,6 +32,14 @@ train_masks_nib = nib.load(train_masks_filename)
 
 #convert nifti objects in to a numpy array
 train_imgs = train_imgs_nib.get_fdata() 
+
+
+train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
+
+train_imgs = (train_imgs * 255).astype(int)
+
+
+
 train_masks = train_masks_nib.get_fdata() 
 
 assert(train_imgs.shape == train_masks.shape)
@@ -52,6 +61,12 @@ train_imgs = np.expand_dims(train_imgs,axis=3)
 
 train_masks = np.transpose(train_masks)
 train_masks = np.expand_dims(train_masks,axis=3)
+
+print(train_masks.shape)
+print(np.unique(train_masks))
+
+print(train_imgs.shape)
+print(np.unique(train_imgs))
 
 ###################################
 '''
@@ -117,13 +132,16 @@ def unet(input_size = (512,512,1)):
     return model
 
 model = unet()
+y = model(train_imgs[np.newaxis,0,...])
+print(y.shape)
+print(y[0,0,0,0])
 
 ###################################
 '''
 Genrate optimizer and loss function and apply them to our unet model
 '''
 opt =tf.keras.optimizers.Adam(LR)
-loss =tf.keras.losses.CategoricalCrossentropy()
+loss =tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True,reduction=tf.keras.losses.Reduction.NONE)
 metrics = [tf.keras.metrics.Accuracy()] 
 model.compile(optimizer=opt,loss=loss,metrics=metrics)
 
