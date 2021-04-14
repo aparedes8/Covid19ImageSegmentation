@@ -12,11 +12,7 @@ import cv2
 Hyperparameters
 '''
 BATCH_SIZE = 4
-<<<<<<< HEAD
 EPOCHS = 2
-=======
-EPOCHS = 3
->>>>>>> 5693e74bf273018af7deb366b620d1be572e6512
 LR = 1e-7
 
 
@@ -40,11 +36,7 @@ train_imgs = train_imgs_nib.get_fdata()
 
 train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
 
-<<<<<<< HEAD
 # train_imgs = (train_imgs * 255).astype(int)
-=======
-train_imgs = (train_imgs * 255).astype(int)
->>>>>>> 5693e74bf273018af7deb366b620d1be572e6512
 
 
 
