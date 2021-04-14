@@ -12,9 +12,10 @@ from unet import Unet
 Hyperparameters
 '''
 BATCH_SIZE = 4
-EPOCHS = 2
+EPOCHS = 30
 LR = 1e-7
 
+###################################
 ###################################
 '''
 Dataset loader obtained from the link below
@@ -31,6 +32,14 @@ train_masks_nib = nib.load(train_masks_filename)
 
 #convert nifti objects in to a numpy array
 train_imgs = train_imgs_nib.get_fdata() 
+
+
+train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
+
+# train_imgs = (train_imgs * 255).astype(int)
+
+
+
 train_masks = train_masks_nib.get_fdata() 
 
 assert(train_imgs.shape == train_masks.shape)
@@ -47,31 +56,31 @@ assert(train_imgs.shape[0:2] == test_imgs.shape[0:2])
 
 # Data formatched adding channel dimension and ensuring batch is at the front index 
 train_imgs = np.transpose(train_imgs)
-train_imgs = np.expand_dims(train_imgs,axis=3)
+# train_imgs = np.expand_dims(train_imgs,axis=3)
 
 
-train_masks = np.transpose(train_masks)
-train_masks = np.expand_dims(train_masks,axis=3)
+train_masks = np.transpose(train_masks).astype(float)
+# train_masks = np.expand_dims(train_masks,axis=3)
+
+print(train_masks.shape)
+print(np.unique(train_masks))
+
+print(train_imgs.shape)
+print(np.unique(train_imgs))
 
 ###################################
 '''
 Lets display a sample image
 '''
-sample = train_imgs[0,:,:,0]
+sample = train_imgs[0,:,:]
 
 plt.imsave("sample_ct.png",sample)
-
-###################################
-
-print(train_masks.shape)
-
 ###################################
 #create tensorflow  tensor formated datasets from our numpy matrices
 train_ds = tf.data.Dataset.from_tensor_slices(
     (train_imgs, train_masks)).shuffle(train_imgs.shape[0]).batch(BATCH_SIZE)
 
 # test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(BATCH_SIZE)
-
 ###################################
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
@@ -83,11 +92,6 @@ train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy
 
 test_loss = tf.keras.metrics.Mean(name='test_loss')
 test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='test_accuracy')
-###################################
-#load model 
-
-#model = Unet()
-
 ###################################
 '''
 Build Unet model
@@ -137,17 +141,18 @@ def unet(input_size = (512,512,1)):
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge9)
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
     conv9 = tf.keras.layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
-    conv10 = tf.keras.layers.Conv2D(1, 1, activation = 'sigmoid')(conv9)
+    conv10 = tf.keras.layers.Conv2D(4, 1, activation = 'sigmoid')(conv9)
+    # final = tf.math.argmax(conv10,axis=3,output_type=tf.dtypes.int32)
+    # final = tf.keras.layers.Flatten()(final)
+    # final = tf.cast(final,tf.float64)
+    # final = tf.expand_dims(final,axis=3)
 
     model= tf.keras.Model(inputs,conv10)
 
     return model
 
-model = Unet()
-model.build(input_shape=(512,512,1))
+model = unet()
 model.summary()
-
-
 ###################################
 '''
 Generate gradient caclulations and weight update steps from trian and test
@@ -194,6 +199,7 @@ for epoch in range(EPOCHS):
   test_accuracy.reset_states()
   cnt = 0
   for images, labels in train_ds:
+  # for images, labels in train_imgs,train_masks:
     print('Training batch {} out of {}'.format(cnt, train_len))
     cnt += 1
     train_step(images, labels)
@@ -242,5 +248,5 @@ plt.savefig("./results/loss_plot.png")
 
 
 
-pred = model(train_imgs[0,...])
-print(np.unique(pred))
+# pred = model(train_imgs[0,...])
+# print(np.unique(pred))
