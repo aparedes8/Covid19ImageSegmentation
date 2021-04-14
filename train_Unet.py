@@ -12,7 +12,11 @@ import cv2
 Hyperparameters
 '''
 BATCH_SIZE = 4
+<<<<<<< HEAD
+EPOCHS = 2
+=======
 EPOCHS = 3
+>>>>>>> 5693e74bf273018af7deb366b620d1be572e6512
 LR = 1e-7
 
 
@@ -36,7 +40,11 @@ train_imgs = train_imgs_nib.get_fdata()
 
 train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
 
+<<<<<<< HEAD
+# train_imgs = (train_imgs * 255).astype(int)
+=======
 train_imgs = (train_imgs * 255).astype(int)
+>>>>>>> 5693e74bf273018af7deb366b620d1be572e6512
 
 
 
@@ -56,11 +64,17 @@ assert(train_imgs.shape[0:2] == test_imgs.shape[0:2])
 
 # Data formatched adding channel dimension and ensuring batch is at the front index 
 train_imgs = np.transpose(train_imgs)
-train_imgs = np.expand_dims(train_imgs,axis=3)
+# train_imgs = np.expand_dims(train_imgs,axis=3)
 
 
-train_masks = np.transpose(train_masks)
-train_masks = np.expand_dims(train_masks,axis=3)
+train_masks = np.transpose(train_masks).astype(float)
+# train_masks = np.expand_dims(train_masks,axis=3)
+
+print(train_masks.shape)
+print(np.unique(train_masks))
+
+print(train_imgs.shape)
+print(np.unique(train_imgs))
 
 print(train_masks.shape)
 print(np.unique(train_masks))
@@ -72,7 +86,7 @@ print(np.unique(train_imgs))
 '''
 Lets display a sample image
 '''
-sample = train_imgs[0,:,:,0]
+sample = train_imgs[0,:,:]
 
 plt.imsave("sample_ct.png",sample)
 
@@ -125,23 +139,26 @@ def unet(input_size = (512,512,1)):
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge9)
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
     conv9 = tf.keras.layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
-    conv10 = tf.keras.layers.Conv2D(1, 1, activation = 'sigmoid')(conv9)
+    conv10 = tf.keras.layers.Conv2D(4, 1, activation = 'sigmoid')(conv9)
+    final = tf.math.argmax(conv10,axis=3,output_type=tf.dtypes.int32)
+    # final = tf.expand_dims(final,axis=3)
 
-    model= tf.keras.Model(inputs,conv10)
+    model= tf.keras.Model(inputs,final)
 
     return model
 
 model = unet()
 y = model(train_imgs[np.newaxis,0,...])
-print(y.shape)
-print(y[0,0,0,0])
+print("fml")
+# print(y.shape)
+# print(y[0,0,0,0])
 
 ###################################
 '''
 Genrate optimizer and loss function and apply them to our unet model
 '''
 opt =tf.keras.optimizers.Adam(LR)
-loss =tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True,reduction=tf.keras.losses.Reduction.NONE)
+loss =tf.keras.losses.CategoricalCrossentropy(from_logits=True,reduction=tf.keras.losses.Reduction.NONE)
 metrics = [tf.keras.metrics.Accuracy()] 
 model.compile(optimizer=opt,loss=loss,metrics=metrics)
 
