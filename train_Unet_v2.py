@@ -117,17 +117,28 @@ def unet(input_size = (512,512,1)):
     # print(inputs.shape)
     conv1 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs)
     conv1 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv1)
-    pool1 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(conv1)
+    bn1 = tf.keras.layers.BatchNormalization()(conv1)
+    pool1 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(bn1)
+   
+
     conv2 = tf.keras.layers.Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(pool1)
     conv2 = tf.keras.layers.Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv2)
-    pool2 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(conv2)
+    bn2 = tf.keras.layers.BatchNormalization()(conv2)
+    pool2 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(bn2)
+    
+
     conv3 = tf.keras.layers.Conv2D(256, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(pool2)
     conv3 = tf.keras.layers.Conv2D(256, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv3)
-    pool3 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(conv3)
+    bn3 = tf.keras.layers.BatchNormalization()(conv3)
+    pool3 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(bn3)
+   
+
     conv4 = tf.keras.layers.Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(pool3)
     conv4 = tf.keras.layers.Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv4)
-    drop4 = tf.keras.layers.Dropout(0.5)(conv4)
+    bn4 = tf.keras.layers.BatchNormalization()(conv4)
+    drop4 = tf.keras.layers.Dropout(0.5)(bn4)
     pool4 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(drop4)
+    
 
     conv5 = tf.keras.layers.Conv2D(1024, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(pool4)
     conv5 = tf.keras.layers.Conv2D(1024, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv5)
@@ -264,5 +275,10 @@ plt.savefig("./results/loss_plot.png")
 
 
 
-# pred = model(train_imgs[0,...])
-# print(np.unique(pred))
+pred = model(train_imgs[np.newaxis,0,:,:])
+print(pred.shape)
+pred = tf.argmax(pred)
+print(np.unique(pred))
+
+model.save('model/unet')
+
