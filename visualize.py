@@ -40,7 +40,7 @@ print(np.unique(train_imgs))
 '''
 load saved unet model
 '''
-model = tf.keras.models.load_model("/content/drive/MyDrive/model/unet/")
+model = tf.keras.models.load_model("/model/unet/")
 model.summary()
 ###################################
 '''
