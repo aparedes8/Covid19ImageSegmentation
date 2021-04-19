@@ -39,16 +39,22 @@ train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train
 # train_imgs = (train_imgs * 255).astype(int)
 
 
+#trian test split
+test_imgs = train_imgs[:,:,69:]
+train_imgs = train_imgs[:,:,:70]
 
 train_masks = train_masks_nib.get_fdata() 
+test_masks = train_masks[:,:,69:]
+train_masks = train_masks[:,:,:70]
+
 
 assert(train_imgs.shape == train_masks.shape)
 
-test_imgs_filename = './data/test/val_im.nii.gz'
-test_imgs_nib = nib.load(test_imgs_filename)
+# test_imgs_filename = './data/test/val_im.nii.gz'
+# test_imgs_nib = nib.load(test_imgs_filename)
 
-#convert nifti objects in to a numpy array
-test_imgs = test_imgs_nib.get_fdata() 
+# #convert nifti objects in to a numpy array
+# test_imgs = test_imgs_nib.get_fdata() 
 
 # print(train_imgs.shape)
 assert(train_imgs.shape[0:2] == test_imgs.shape[0:2])
@@ -80,7 +86,7 @@ plt.imsave("sample_ct.png",sample)
 train_ds = tf.data.Dataset.from_tensor_slices(
     (train_imgs, train_masks)).shuffle(train_imgs.shape[0]).batch(BATCH_SIZE)
 
-# test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(BATCH_SIZE)
+test_ds = tf.data.Dataset.from_tensor_slices((test_imgs, test_masks)).batch(BATCH_SIZE)
 ###################################
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
@@ -190,7 +196,7 @@ test_loss_list = []
 
 
 train_len = len(list(train_ds))
-# test_len = len(list(test_ds))
+test_len = len(list(test_ds))
 for epoch in range(EPOCHS):
   # Reset the metrics at the start of the next epoch
   train_loss.reset_states()
@@ -204,10 +210,10 @@ for epoch in range(EPOCHS):
     cnt += 1
     train_step(images, labels)
   cnt = 0
-#   for test_images, test_labels in test_ds:
-#     print('Testing batch {} out of {}'.format(cnt, test_len))
-#     cnt += 1
-#     test_step(test_images, test_labels)
+  for test_images, test_labels in test_ds:
+    print('Testing batch {} out of {}'.format(cnt, test_len))
+    cnt += 1
+    test_step(test_images, test_labels)
 
   print(
     f'Epoch {epoch + 1}, '
@@ -230,7 +236,7 @@ print(train_acc_list)
 
 plt.title("Accuracy vs Epoch Plot")
 plt.plot(epoch_list,train_acc_list,label='Train Accuracy',color='r')
-# plt.plot(epoch_list,test_acc_list,label='Test Accuracy',color='g')
+plt.plot(epoch_list,test_acc_list,label='Test Accuracy',color='g')
 
 plt.xlabel("EPOCHS")
 plt.ylabel("Accuracy")
@@ -240,7 +246,7 @@ plt.savefig("./results/Accuracy_plot.png")
 plt.figure()
 plt.title("Loss vs Epoch Plot")
 plt.plot(epoch_list,train_loss_list,label='Train loss',color='r')
-# plt.plot(epoch_list,test_loss_list,label='Test loss',color='g')
+plt.plot(epoch_list,test_loss_list,label='Test loss',color='g')
 plt.xlabel("EPOCHS")
 plt.ylabel("Loss")
 plt.legend()
