@@ -40,11 +40,11 @@ train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train
 
 
 #trian test split
-test_imgs = train_imgs[:,:,69:]
+test_imgs = train_imgs[:,:,70:]
 train_imgs = train_imgs[:,:,:70]
 
 train_masks = train_masks_nib.get_fdata() 
-test_masks = train_masks[:,:,69:]
+test_masks = train_masks[:,:,70:]
 train_masks = train_masks[:,:,:70]
 
 
@@ -68,11 +68,21 @@ train_imgs = np.transpose(train_imgs)
 train_masks = np.transpose(train_masks).astype(float)
 # train_masks = np.expand_dims(train_masks,axis=3)
 
+test_imgs = np.transpose(test_imgs)
+# train_imgs = np.expand_dims(train_imgs,axis=3)
+
+
+test_masks = np.transpose(test_masks).astype(float)
+# train_masks = np.expand_dims(train_masks,axis=3)
+
 print(train_masks.shape)
-print(np.unique(train_masks))
+# print(np.unique(train_masks))
 
 print(train_imgs.shape)
-print(np.unique(train_imgs))
+# print(np.unique(train_imgs))
+
+print(test_imgs.shape)
+print(test_masks.shape)
 
 ###################################
 '''
