@@ -6,6 +6,7 @@ import os
 import nibabel as nib #Used to open nifTi or .nii files 
 import matplotlib.pyplot as plt 
 from unet import Unet
+from dataaug import genDataAugImages
 
 ###################################
 '''
@@ -74,6 +75,8 @@ test_imgs = np.transpose(test_imgs)
 
 test_masks = np.transpose(test_masks).astype(float)
 # train_masks = np.expand_dims(train_masks,axis=3)
+
+train_imgs, train_masks = genDataAugImages(train_imgs, train_masks)
 
 print(train_masks.shape)
 # print(np.unique(train_masks))
