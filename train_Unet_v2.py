@@ -36,6 +36,7 @@ train_imgs = train_imgs_nib.get_fdata()
 
 
 train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
+train_imgs = train_imgs * 255
 
 # train_imgs = (train_imgs * 255).astype(int)
 
