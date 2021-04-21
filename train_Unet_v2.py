@@ -78,6 +78,7 @@ test_masks = np.transpose(test_masks).astype(float)
 # train_masks = np.expand_dims(train_masks,axis=3)
 
 train_imgs, train_masks = genDataAugImages(train_imgs, train_masks)
+train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
 
 print(train_masks.shape)
 # print(np.unique(train_masks))
