@@ -129,20 +129,20 @@ def genDataAugImages(trainImages, trainMasks):
              final image count
     """
     initialImages = initNormResamp(trainImages)
-#     geomImages, geomMasks = geomTransform(initialImages, trainMasks, 3)
+    geomImages, geomMasks = geomTransform(initialImages, trainMasks, 3)
     noisyImages = noiseAug(initialImages, 1)
     brightImages = brightAug(initialImages, 1)
     histImages = histEq(initialImages)
 
-#     print(initialImages.shape, geomImages.shape, noisyImages.shape, brightImages.shape, histImages.shape)
+    print(initialImages.shape, geomImages.shape, noisyImages.shape, brightImages.shape, histImages.shape)
 
-#     returnImages = np.concatenate((initialImages, geomImages, noisyImages, brightImages, histImages), axis=0)
-#     returnMasks = np.concatenate(
-#         (trainMasks, geomMasks, np.tile(trainMasks, (1, 1, 1)), np.tile(trainMasks, (1, 1, 1)), trainMasks), axis=0)
-
-    returnImages = np.concatenate((initialImages, noisyImages, brightImages, histImages), axis=0)
+    returnImages = np.concatenate((initialImages, geomImages, noisyImages, brightImages, histImages), axis=0)
     returnMasks = np.concatenate(
-        (trainMasks, np.tile(trainMasks, (1, 1, 1)), np.tile(trainMasks, (1, 1, 1)), trainMasks), axis=0)
+        (trainMasks, geomMasks, np.tile(trainMasks, (1, 1, 1)), np.tile(trainMasks, (1, 1, 1)), trainMasks), axis=0)
+
+#     returnImages = np.concatenate((initialImages, noisyImages, brightImages, histImages), axis=0)
+#     returnMasks = np.concatenate(
+#         (trainMasks, np.tile(trainMasks, (1, 1, 1)), np.tile(trainMasks, (1, 1, 1)), trainMasks), axis=0)
 
     shuffler = np.random.permutation(returnImages.shape[0])
     returnImages = returnImages[shuffler]
