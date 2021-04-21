@@ -13,7 +13,7 @@ from dataaug import genDataAugImages
 Hyperparameters
 '''
 BATCH_SIZE = 5
-EPOCHS = 30
+EPOCHS = 5
 LR = 1e-7
 
 ###################################
