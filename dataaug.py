@@ -140,6 +140,10 @@ def genDataAugImages(trainImages, trainMasks):
     returnMasks = np.concatenate(
         (trainMasks, geomMasks, np.tile(trainMasks, (1, 1, 1)), np.tile(trainMasks, (1, 1, 1)), trainMasks), axis=0)
 
+#     returnImages = np.concatenate((initialImages, noisyImages, brightImages, histImages), axis=0)
+#     returnMasks = np.concatenate(
+#         (trainMasks, np.tile(trainMasks, (1, 1, 1)), np.tile(trainMasks, (1, 1, 1)), trainMasks), axis=0)
+
     shuffler = np.random.permutation(returnImages.shape[0])
     returnImages = returnImages[shuffler]
     returnMasks = returnMasks[shuffler]

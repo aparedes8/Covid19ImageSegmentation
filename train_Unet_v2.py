@@ -6,12 +6,13 @@ import os
 import nibabel as nib #Used to open nifTi or .nii files 
 import matplotlib.pyplot as plt 
 from unet import Unet
+from dataaug import genDataAugImages
 
 ###################################
 '''
 Hyperparameters
 '''
-BATCH_SIZE = 4
+BATCH_SIZE = 5
 EPOCHS = 30
 LR = 1e-7
 
@@ -35,6 +36,7 @@ train_imgs = train_imgs_nib.get_fdata()
 
 
 train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
+train_imgs = train_imgs * 255
 
 # train_imgs = (train_imgs * 255).astype(int)
 
@@ -74,6 +76,9 @@ test_imgs = np.transpose(test_imgs)
 
 test_masks = np.transpose(test_masks).astype(float)
 # train_masks = np.expand_dims(train_masks,axis=3)
+
+train_imgs, train_masks = genDataAugImages(train_imgs, train_masks)
+train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
 
 print(train_masks.shape)
 # print(np.unique(train_masks))
