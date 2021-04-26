@@ -3,7 +3,7 @@ import numpy as np
 import os
 import nibabel as nib #Used to open nifTi or .nii files 
 import cv2
-
+from dataaug import resizeImages
 ###################################
 # example from tensorflow
 # from tensorflow_examples.models.pix2pix import pix2pix
@@ -105,6 +105,9 @@ def load_data():
     
     test_masks = np.transpose(test_masks).astype(float)
     
+    train_imgs, train_masks = resizeImages(train_imgs, train_masks, (256, 256))
+    test_imgs, test_masks = resizeImages(test_imgs, test_masks, (256, 256))
+
     print("Data loaded Train images shape : {} and Test images Shape {} ".format(train_imgs.shape,test_imgs.shape))
     print("Data loaded Train masks shape : {} and Test masks Shape {} ".format(train_imgs.shape,test_imgs.shape))
 
