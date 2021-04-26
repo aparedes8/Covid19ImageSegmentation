@@ -5,6 +5,27 @@ import scipy.ndimage as nd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
+def resizeImages(trainSeq, trainMasks, outputSize):
+    """
+    Function to resize images and their corresponding masks.
+    :param trainSeq: Images for training or testing, of size (n, 512, 512) where n is the number of images
+    :param trainMasks: Masks of size (n, 512, 512) where n is the number of images
+    :param inputSize: A tuple containing the size to convert the images and masks to
+    :return: outputSeq, outputMasks containing the new images and the corresponding masks
+    """
+    n, h, w = trainSeq.shape
+    outputSeq = np.zeros((n, outputSize[0], outputSize[1]))
+    outputMasks = np.zeros_like(outputSeq)
+
+    for im in range(n):
+        img = trainSeq[im, :, :]
+        mask = trainMasks[im, :, :]
+        outputSeq[im, :, :] = cv2.resize(img, outputSize)
+        outputMasks[im, :, :] = cv2.resize(mask, outputSize)
+
+    return outputSeq, outputMasks
+
+
 def noiseAug(trainSeq, numImages):
     """
   Function to add random Gaussian Noise to given set of images.
@@ -128,6 +149,7 @@ def genDataAugImages(trainImages, trainMasks):
     :return: returnImages and returnMasks of augmented images, each of sizes (M, 512, 512), where M is the
              final image count
     """
+    trainImages, trainMasks = resizeImages(trainImages, trainMasks, (256, 256))
     initialImages = initNormResamp(trainImages)
     geomImages, geomMasks = geomTransform(initialImages, trainMasks, 3)
     noisyImages = noiseAug(initialImages, 1)

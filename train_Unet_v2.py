@@ -6,7 +6,7 @@ import os
 import nibabel as nib #Used to open nifTi or .nii files 
 import matplotlib.pyplot as plt 
 from unet import Unet
-from dataaug import genDataAugImages
+from dataaug import genDataAugImages, resizeImages
 
 ###################################
 '''
@@ -80,6 +80,8 @@ test_masks = np.transpose(test_masks).astype(float)
 train_imgs, train_masks = genDataAugImages(train_imgs, train_masks)
 train_imgs = (train_imgs -  np.min(train_imgs))/(np.max(train_imgs)-np.min(train_imgs))
 
+test_imgs, test_masks = resizeImages(test_imgs, test_masks, (256, 256))
+
 print(train_masks.shape)
 # print(np.unique(train_masks))
 
@@ -117,7 +119,7 @@ test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='test_accuracy')
 '''
 Build Unet model
 '''
-def unet(input_size = (512,512,1)):
+def unet(input_size = (256,256,1)):
     inputs = tf.keras.layers.Input(input_size)
     # print(inputs.shape)
     conv1 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(inputs)
