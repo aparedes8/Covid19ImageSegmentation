@@ -59,18 +59,27 @@ Train our model
 '''
 model.summary()
 
-history = model.fit(train_ds,batch_size=BATCH_SIZE,epochs=EPOCHS,verbose=2)
+history = model.fit(train_ds,batch_size=BATCH_SIZE,epochs=EPOCHS,verbose=2,validation_data=test_ds)
 print(history.history)
 
 results = model.evaluate(x_test, y_test, batch_size=BATCH_SIZE)
 print("test loss, test acc:", results)
 
-x = np.linspace(1,len(history.history['loss'])+1,len(history.history['loss']))
-print(x)
-plt.title("Accuracy vs Loss Plot")
-plt.plot(x,history.history['loss'],label='loss',color='k')
-plt.plot(x,history.history['accuracy'],label='Accuracy',color='r')
-plt.xlabel("EPOCHS")
-plt.ylabel("Value")
-plt.legend()
-plt.savefig("./results/train_test_plot.png")
+print(history.history.keys())
+
+# summarize history for accuracy and loss
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
