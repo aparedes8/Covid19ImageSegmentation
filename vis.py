@@ -23,15 +23,14 @@ def create_mask(pred_mask):
   return pred_mask[0]
 
 def show_predictions(dataset=None, num=1):
- if dataset:
- 	idx=0
-   for image, mask in dataset.take(num):
-     pred_mask = model.predict(image)
-     display([image[0], mask[0], create_mask(pred_mask)],num)
-     idx+=1
- else:
-   display([sample_image, sample_mask,
-            create_mask(model.predict(sample_image[tf.newaxis, ...]))])
+  if dataset:
+    idx=0
+    for image, mask in dataset.take(num):
+      pred_mask = model.predict(image)
+      display([image[0], mask[0], create_mask(pred_mask)],num)
+      idx+=1
+    # else:
+      # display([sample_image, sample_mask,create_mask(model.predict(sample_image[tf.newaxis, ...]))])
 
 
 

@@ -14,7 +14,7 @@ from model import unet
 Hyperparameters
 '''
 BATCH_SIZE = 4
-EPOCHS = 2
+EPOCHS = 30
 LR = 1e-7
 
 ###################################
@@ -26,6 +26,9 @@ https://medicalsegmentation.com/covid19/
 # resolution = 512 x 512 
 '''
 x_train,x_test,y_train,y_test = load_data()
+y_train = tf.keras.utils.to_categorical(y_train,4)
+y_test = tf.keras.utils.to_categorical(y_test,4)
+print(y_train.shape)
 train_ds,test_ds = convert_tf_dataset(x_train,x_test,y_train,y_test,BATCH_SIZE=BATCH_SIZE)
 
 ###################################
@@ -49,7 +52,7 @@ y = model(x_train[np.newaxis,0,...])
 Genrate optimizer and loss function and apply them to our unet model
 '''
 opt =tf.keras.optimizers.Adam(LR)
-loss =tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+loss =tf.keras.losses.CategoricalCrossentropy(from_logits=True)
 metrics = [tf.keras.metrics.Accuracy()] 
 model.compile(optimizer=opt,loss=loss,metrics=metrics)
 
